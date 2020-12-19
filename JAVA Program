@@ -1,0 +1,263 @@
+import java.util.*;
+import java.io.*;
+
+class stve
+{	
+
+
+	public static int[][] remrow(int A[][],int a,int b)
+	{ int p=0,q=0;int B[][]=new int[A.length-1][A.length-1];
+				for(int j=0;j<A.length;j++)
+				{
+					if(j!=a)
+					{	q=0;
+					for(int k=0;k<A.length;k++)
+						{ if(k!=b)
+						B[p][q++]=A[j][k];
+						}
+					p++;
+					}
+				}
+		return B;
+	}
+		
+		public static int[][] changerow(int A[][],int B[],int r)
+		{	int C[][]=new int[A.length][A.length];
+			for (int i=0;i<A.length;i++)
+			{	C[i][r]=B[i];
+			}
+			for(int i=0;i<A.length;i++)
+			{
+				for(int j=0;j<A.length;j++)
+				{if(j!=r)
+				C[i][j]=A[i][j];
+				}
+			}
+		return C;
+		}
+
+	public static int[][] cofac(int A[][])
+	{
+		int B[][]=new int[A.length][A.length];
+		for(int i=0;i<A.length;i++)
+		{
+			for(int j=0;j<A.length;j++)
+			{
+				int C[][]=remrow(A,j,i);
+				B[i][j]=((int)Math.pow(-1,(i+j)))*detv(C);
+			}
+		}
+		return B;
+	}
+
+	public static int[][] adjoint(int A[][])
+	{	A=cofac(A);
+		for(int i=0;i<A.length;i++)
+		{
+			for(int j=0;j<A.length;j++)
+			{
+				int t=A[i][j];A[i][j]=A[j][i];A[j][i]=t;
+			}
+		}
+		return A;
+	}
+	
+	public static int detv(int A[][])
+	{	
+		int sum=0;
+		 for( int i=0;i<A.length;i++)
+		{
+				int B[][]=remrow(A,i,0);
+			  sum=sum+((int)Math.pow(-1,i))*A[i][0]*detv(B);
+		}
+			if(A.length==1)
+			return A[0][0];
+			return sum;
+	}
+
+	public static double[][] inverse(int A[][])
+	{ int Ad[][]=adjoint(A);
+		int det=detv(A);double I[][]=new double[A.length][A.length];
+		for(int i=0;i<A.length;i++)
+		{	
+			for(int j=0;j<A.length;j++)
+			{
+				I[i][j]=1.0*Ad[i][j]/det;
+			}
+		}
+		return I;
+	}
+
+	public static int[][] multiply(int A[][],int B[][])
+	{ int C[][]=new int[A.length][B[0].length];
+		for(int i=0;i<A.length;i++)
+		{
+			for(int k=0;k<B[0].length;k++)
+			{	int sum=0;
+				for(int j=0;j<B.length;j++)
+				{
+					
+					sum=sum+A[i][j]*B[j][k];
+				}
+				C[i][k]=sum;
+			}
+		}
+		return C;
+	}			
+
+	public static void print(int A[][])
+	{
+		for(int i=0;i<A.length;i++)
+		{
+				for(int j=0;j<A[0].length;j++)
+				System.out.print("\t"+A[i][j]);
+			System.out.println();
+		}
+	}
+	
+				
+	public static void main(String args[]) throws IOException
+	{
+		Scanner sc=new Scanner(System.in);
+			while(true)
+			{
+				System.out.println(" 		\n\n\n	MENU	(Press the required option)	: ");
+				System.out.println("\n\n\t\t		1  for Value of Determinant 		: ");
+				System.out.println("\n\n\t\t		2  for Adjoint of the Matrix 		: ");
+                                System.out.println("\n\n\t\t		3  for Inverse of the Matrix 		: ");
+				System.out.println("\n\n\t\t		4  Matrix Multiplication 		: ");
+				System.out.println("\n\n\t\t		5  Solve linear equations 		: ");
+				System.out.print("\n\n\t\t		0 to terminate the program		: ");
+					int ch=sc.nextInt();
+				if(ch==0)
+				{System.out.println("	\n\n\n\n\t\t\t\tTHANKS FOR YOUR TIME,  \t\t\t HAVE A NICE Day\n\n\n\n");
+				System.exit(0);
+				}
+				switch(ch)
+				{
+					case 1 :   
+					{	System.out.print("\n\n\t\tEnter the Order of Matrix :		");
+						int N=sc.nextInt();
+						System.out.println("\n\t\tEnter the elements of Matrix in each row : ");
+	
+						int K[][]=new int[N][N];
+						for(int i=0;i<N;i++)
+						{
+							for(int j=0;j<N;j++)
+							K[i][j]=sc.nextInt();
+						}
+
+						System.out.println("\n\t\t Value of Determinant = "+detv(K));break;
+					}
+					case 2:
+					{	System.out.print("Enter the Order of Matrix :		");
+						int N=sc.nextInt();
+						System.out.println("\nEnter the elements of Matrix in each row : ");
+	
+						int K[][]=new int[N][N];
+						for(int i=0;i<N;i++)
+						{
+							for(int j=0;j<N;j++)
+							K[i][j]=sc.nextInt();
+						}
+
+						System.out.println("\n Adjoint of Matrix  = \n");
+						print(cofac(K));break;
+					}
+					case 3:
+					{	System.out.print("Enter the Order of Matrix :		");
+						int N=sc.nextInt();
+						System.out.println("\nEnter the elements of Matrix in each row : ");
+	
+						int K[][]=new int[N][N];
+						for(int i=0;i<N;i++)
+						{
+							for(int j=0;j<N;j++)
+							K[i][j]=sc.nextInt();
+						}
+						if(detv(K)==0)
+						{System.out.println("\nInverse not possible");break;
+						}
+						double II[][]=inverse(K);System.out.println("\nInverse of MAtrix is \t: ");
+						for(int i=0;i<II.length;i++)
+						{
+							for(int j=0;j<II.length;j++)
+							System.out.print("\t"+II[i][j]);
+							System.out.println();
+						}
+						break;
+					}
+				case 4:
+					{	System.out.print("\nEnter no. of rows of Matrix A \t:	\t	");
+						int m=sc.nextInt();
+						System.out.print("\nEnter no. of coulumns of Matrix A \t:	\t	");
+						int n=sc.nextInt();
+						System.out.print("\nEnter no. of couloums of Matrix B \t:	\t	");
+						int p=sc.nextInt();
+						System.out.println("\nEnter the elements of Matrix A in each row :\t ");
+	
+						int K[][]=new int[m][n];int Z[][]=new int[n][p];
+						for(int i=0;i<m;i++)
+						{
+							for(int j=0;j<n;j++)
+							K[i][j]=sc.nextInt();
+						}
+
+							System.out.println("\nEnter the elements of Matrix A in each row : ");
+							for(int i=0;i<n;i++)
+						{
+							for(int j=0;j<p;j++)
+							Z[i][j]=sc.nextInt();
+						}
+
+							System.out.println("\n\t\tResultant Matrix is\t:\t");
+							print(multiply(K,Z));	break;
+					}
+
+
+
+			case 5:
+			{
+				System.out.print("\n\nEnter no of variables\t:	\t	");int N=sc.nextInt();
+				System.out.println("\n\nEnter coefficients of variables in the form of a square matrix i.e. ("+N+" * "+N+")\t:");int A[][]=new int[N][N];
+						for(int i=0;i<N;i++)
+						{
+							for(int j=0;j<N;j++)
+							A[i][j]=sc.nextInt();
+						}System.out.println("\n\nEnter constants in form of a matrix i.e. ("+N+" * 1)\t:");int B[]=new int[N];
+				
+					for(int j=0;j<N;j++)
+					B[j]=sc.nextInt();
+				System.out.println("The value of variables are respectively");int det=detv(A);
+				for(int i=0;i<N;i++)
+				{	int K[][]=changerow(A,B,i);System.out.print("\t\t"+(detv(K)/(1.0*det)));}
+			}
+					
+}
+}
+}
+}
+	
+						
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
